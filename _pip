@@ -6,10 +6,12 @@ _arguments -C '*::command:->command' && return 0
 
 case $state in
 	command)
-	if [[ $CURRENT != 1 && $words[$CURRENT] != -* ]]; then
+	if [[ $CURRENT != 1 && $words[$CURRENT] != -* && $words[$CURRENT-1] != "-r" ]]; then
 		state=packages
+	elif [[ $words[$CURRENT-1] == "-r" ]]; then
+		state=files
 	else
-		state=subcommands
+	    state=subcommands
 	fi
 	;;
 esac
@@ -29,4 +31,6 @@ case $state in
 		_describe -t commands 'packages' packages
 	fi
 	;;
+	files)
+	_arguments -C '*:input file:_files' && return 0
 esac
